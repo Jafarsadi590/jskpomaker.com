@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSK PO Maker.com</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-bg: #f9f9f9;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            max-width: 210mm;
+            width: 100%;
+            min-height: 100vh;
+            margin: 0 auto;
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .company-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .supplier-info, .company-info {
+            flex: 1 1 300px;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .po-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+            border-radius: 6px;
+            overflow-x: auto;
+            display: block;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .po-table th {
+            background: var(--secondary-color);
+            color: white;
+            padding: 10px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .po-table td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            white-space: nowrap;
+        }
+
+        .editable {
+            background: var(--light-bg);
+            padding: 4px 6px;
+            border-radius: 3px;
+            border: 1px solid #ddd;
+            transition: all 0.2s ease;
+            width: 100%;
+            min-width: 60px;
+        }
+
+        .editable:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 2px rgba(52,152,219,0.2);
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        .save-print {
+            background: #27ae60;
+            color: white;
+        }
+
+        .share-btn {
+            background: #2980b9;
+            color: white;
+        }
+
+        .delete-btn {
+            background: var(--accent-color);
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .total-section {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .approved-by {
+            margin-top: 30px;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        @media print {
+            button { display: none !important; }
+            body { padding: 10px; background: white; }
+            .company-header { box-shadow: none; }
+        }
+
+        @media (max-width: 768px) {
+            .po-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .editable {
+                min-width: 50px;
+            }
+            
+            button {
+                padding: 8px 15px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .company-header {
+                padding: 10px;
+            }
+            
+            .flex-container {
+                gap: 10px;
+            }
+            
+            .supplier-info, .company-info {
+                flex: 1 1 100%;
+            }
+            
+            .po-table th, .po-table td {
+                padding: 6px;
+                font-size: 14px;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="company-header">
+        <h1 contenteditable="true">SAF KUWAIT</h1>
+        <p contenteditable="true">📌 Shuwaikh Industrial<br>
+        🏙 Shuwaikh,<br>
+        📞 00000000</p>
+    </div>
+
+    <div class="flex-container">
+        <div class="supplier-info">
+            <h3 style="color: var(--secondary-color);">🏭 Supplier Details</h3>
+            <p contenteditable="true">Supplier Name<br>
+            Supplier Address<br>
+            City, Country</p>
+        </div>
+        
+        <div class="company-info">
+            <p><strong>📄 PO Number:</strong> <span contenteditable="true" class="editable">PO-2023-001</span></p>
+            <p><strong>📅 Date:</strong> <input type="date" class="editable" style="width: 100%; max-width: 160px;"></p>
+        </div>
+    </div>
+
+    <table class="po-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Description</th>
+                <th>Qty</th>
+                <th>UOM</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="items">
+            <tr>
+                <td>1</td>
+                <td><div contenteditable="true" class="editable" tabindex="1">🖥 Computer System</div></td>
+                <td><input type="number" class="editable qty" value="1" min="1" step="1" tabindex="2"></td>
+                <td><div contenteditable="true" class="editable" tabindex="3">PC</div></td>
+                <td><input type="number" class="editable price" value="0.000" min="0" step="0.001" tabindex="4"></td>
+                <td class="total">0.000</td>
+                <td><button class="delete-btn" onclick="deleteRow(this)" tabindex="5">🗑️ Delete</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button onclick="addRow()" style="background: var(--secondary-color); color: white;" tabindex="6">➕ Add New Item</button>
+
+    <div class="total-section">
+        <h3>💰 Total Amount</h3>
+        <p style="font-size: 1.2em; color: var(--primary-color);">Grand Total: <span id="grandtotal">0.000</span></p>
+    </div>
+
+    <div class="approved-by">
+        <p><strong>Approved By:</strong> 
+            <span contenteditable="true" class="editable" style="display: inline-block; min-width: 200px;" tabindex="7">
+                👤 Type Your Name
+            </span>
+        </p>
+    </div>
+
+    <div class="button-group">
+        <button class="save-print" onclick="savePO(); generatePDF()" tabindex="8">
+            💾 Save & PDF
+        </button>
+        <button class="share-btn" onclick="sharePDF()" tabindex="9">
+            📤 Share PDF
+        </button>
+    </div>
+
+    <footer>
+        <p>© 2025 <span contenteditable="true">JSK PO Maker.com</span>. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Track current focused element
+        let currentFocusIndex = 1;
+        const totalFocusableElements = 9; // Update this when adding new focusable elements
+
+        function addRow() {
+            const table = document.getElementById('items');
+            const newRow = table.insertRow();
+            const rowCount = table.rows.length;
+            
+            // Calculate new tab indices for the row
+            const baseTabIndex = (rowCount * 5) + 1; // Each row has 5 focusable elements
+            
+            newRow.innerHTML = `
+                <td>${rowCount}</td>
+                <td><div contenteditable="true" class="editable" tabindex="${baseTabIndex}">📦 New Item</div></td>
+                <td><input type="number" class="editable qty" value="1" min="1" step="1" tabindex="${baseTabIndex + 1}"></td>
+                <td><div contenteditable="true" class="editable" tabindex="${baseTabIndex + 2}">PC</div></td>
+                <td><input type="number" class="editable price" value="0.000" min="0" step="0.001" tabindex="${baseTabIndex + 3}"></td>
+                <td class="total">0.000</td>
+                <td><button class="delete-btn" onclick="deleteRow(this)" tabindex="${baseTabIndex + 4}">🗑️ Delete</button></td>
+            `;
+            
+            addCalcEvents(newRow);
+            calculateTotal();
+            setupEnterKeyNavigation();
+            totalFocusableElements += 5; // Update total count
+        }
+
+        function deleteRow(btn) {
+            const row = btn.closest('tr');
+            row.remove();
+            updateRowNumbers();
+            calculateTotal();
+            totalFocusableElements -= 5; // Update total count
+        }
+
+        function updateRowNumbers() {
+            document.querySelectorAll('#items tr').forEach((row, index) => {
+                row.cells[0].textContent = index + 1;
+                // Update tab indices for each row
+                const baseTabIndex = (index * 5) + 1;
+                row.querySelector('[contenteditable]').setAttribute('tabindex', baseTabIndex);
+                row.querySelector('.qty').setAttribute('tabindex', baseTabIndex + 1);
+                row.querySelector('td:nth-child(4) [contenteditable]').setAttribute('tabindex', baseTabIndex + 2);
+                row.querySelector('.price').setAttribute('tabindex', baseTabIndex + 3);
+                row.querySelector('.delete-btn').setAttribute('tabindex', baseTabIndex + 4);
+            });
+        }
+
+        function addCalcEvents(row) {
+            const qty = row.querySelector('.qty');
+            const price = row.querySelector('.price');
+            qty.addEventListener('input', calculateTotal);
+            price.addEventListener('input', calculateTotal);
+        }
+
+        function calculateTotal() {
+            let grandTotal = 0;
+            document.querySelectorAll('#items tr').forEach(row => {
+                const qty = parseFloat(row.querySelector('.qty').value) || 0;
+                const price = parseFloat(row.querySelector('.price').value) || 0;
+                const total = qty * price;
+                row.querySelector('.total').textContent = total.toFixed(3);
+                grandTotal += total;
+            });
+
+            document.getElementById('grandtotal').textContent = grandTotal.toFixed(3);
+        }
+
+        function savePO() {
+            const poData = {
+                html: document.documentElement.outerHTML,
+                date: new Date().toISOString()
+            };
+            localStorage.setItem('purchaseOrder', JSON.stringify(poData));
+            alert('PO saved successfully!');
+        }
+
+        function generatePDF() {
+            const element = document.body;
+            const opt = {
+                margin: 10,
+                filename: 'PurchaseOrder.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Hide buttons before generating PDF
+            document.querySelectorAll('button').forEach(btn => btn.style.display = 'none');
+            
+            html2pdf().from(element).set(opt).save().then(() => {
+                // Show buttons after PDF generation
+                document.querySelectorAll('button').forEach(btn => btn.style.display = '');
+            });
+        }
+
+        async function sharePDF() {
+            try {
+                // First generate the PDF
+                const element = document.body;
+                const opt = {
+                    margin: 10,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                // Hide buttons before generating PDF
+                document.querySelectorAll('button').forEach(btn => btn.style.display = 'none');
+                
+                const pdf = await html2pdf().from(element).set(opt).outputPdf();
+                
+                // Show buttons after PDF generation
+                document.querySelectorAll('button').forEach(btn => btn.style.display = '');
+
+                // Create a blob from the PDF
+                const blob = new Blob([pdf], { type: 'application/pdf' });
+                
+                if (navigator.share && navigator.canShare({ files: [new File([blob], 'PurchaseOrder.pdf', { type: 'application/pdf' })] })) {
+                    await navigator.share({
+                        title: 'Purchase Order',
+                        files: [new File([blob], 'PurchaseOrder.pdf', { type: 'application/pdf' })]
+                    });
+                } else {
+                    // Fallback for browsers that don't support sharing files
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'PurchaseOrder.pdf';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                }
+            } catch (err) {
+                alert('Error sharing PDF: ' + err.message);
+                // Ensure buttons are visible even if there's an error
+                document.querySelectorAll('button').forEach(btn => btn.style.display = '');
+            }
+        }
+
+        function setupEnterKeyNavigation() {
+            document.querySelectorAll('[contenteditable], input').forEach(element => {
+                element.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const currentTabIndex = parseInt(this.getAttribute('tabindex'));
+                        const nextElement = document.querySelector(`[tabindex="${currentTabIndex + 1}"]`);
+                        
+                        if (nextElement) {
+                            nextElement.focus();
+                            if (nextElement.contentEditable === 'true') {
+                                // Place cursor at beginning of editable div
+                                const range = document.createRange();
+                                range.selectNodeContents(nextElement);
+                                range.collapse(true);
+                                const selection = window.getSelection();
+                                selection.removeAllRanges();
+                                selection.addRange(range);
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        // Initialize calculations and navigation
+        document.querySelectorAll('#items tr').forEach(addCalcEvents);
+        setupEnterKeyNavigation();
+    </script>
+</body>
+</html>
