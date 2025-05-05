@@ -116,13 +116,18 @@
             transform: translateY(-2px);
         }
 
-        .save-print {
+        .save-pdf {
             background: #27ae60;
             color: white;
         }
 
         .share-btn {
-            background: #2980b9;
+            background: #9b59b6;
+            color: white;
+        }
+
+        .print-btn {
+            background: #f39c12;
             color: white;
         }
 
@@ -201,14 +206,6 @@
                 font-size: 14px;
             }
         }
-
-        /* PDF-specific styles */
-        .pdf-container {
-            width: 100%;
-            padding: 20px;
-            background: white;
-            box-shadow: none;
-        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
@@ -276,11 +273,14 @@
         </div>
 
         <div class="button-group">
-            <button class="save-print" onclick="savePO(); generatePDF()" tabindex="8">
+            <button class="save-pdf" onclick="savePO(); generatePDF()" tabindex="8">
                 💾 Save & PDF
             </button>
             <button class="share-btn" onclick="sharePDF()" tabindex="9">
                 📤 Share PDF
+            </button>
+            <button class="print-btn" onclick="window.print()" tabindex="10">
+                🖨️ Print
             </button>
         </div>
 
@@ -292,7 +292,7 @@
     <script>
         // Track current focused element
         let currentFocusIndex = 1;
-        const totalFocusableElements = 9; // Update this when adding new focusable elements
+        let totalFocusableElements = 10; // Updated to include the new print button
 
         function addRow() {
             const table = document.getElementById('items');
@@ -436,18 +436,15 @@
                 buttons.forEach(btn => btn.style.visibility = 'hidden');
                 
                 // Generate PDF blob
-                const pdf = await html2pdf().set(opt).from(element).toPdf().get('pdf').then(function(pdf) {
-                    return pdf.output('blob');
-                }).finally(() => {
-                    // Restore buttons visibility
-                    buttons.forEach(btn => btn.style.visibility = 'visible');
-                    // Restore button state
-                    shareBtn.innerHTML = originalText;
-                    shareBtn.disabled = false;
-                });
+                const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
+                
+                // Restore UI
+                buttons.forEach(btn => btn.style.visibility = 'visible');
+                shareBtn.innerHTML = originalText;
+                shareBtn.disabled = false;
 
                 // Create file for sharing
-                const file = new File([pdf], 'PurchaseOrder.pdf', { type: 'application/pdf' });
+                const file = new File([pdfBlob], 'PurchaseOrder.pdf', { type: 'application/pdf' });
                 
                 if (navigator.share && navigator.canShare({ files: [file] })) {
                     await navigator.share({
@@ -457,14 +454,16 @@
                     });
                 } else {
                     // Fallback for browsers that don't support sharing files
-                    const url = URL.createObjectURL(pdf);
+                    const url = URL.createObjectURL(pdfBlob);
                     const a = document.createElement('a');
                     a.href = url;
                     a.download = 'PurchaseOrder.pdf';
                     document.body.appendChild(a);
                     a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 100);
                 }
             } catch (err) {
                 console.error('Error sharing PDF:', err);
