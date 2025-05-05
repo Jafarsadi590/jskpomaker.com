@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSK PO Maker.com</title>
+    <title>Purchase Order (No Tax)</title>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -201,83 +201,93 @@
                 font-size: 14px;
             }
         }
+
+        /* PDF-specific styles */
+        .pdf-container {
+            width: 100%;
+            padding: 20px;
+            background: white;
+            box-shadow: none;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
-    <div class="company-header">
-        <h1 contenteditable="true">SAF KUWAIT</h1>
-        <p contenteditable="true">📌 Shuwaikh Industrial<br>
-        🏙 Shuwaikh,<br>
-        📞 00000000</p>
-    </div>
-
-    <div class="flex-container">
-        <div class="supplier-info">
-            <h3 style="color: var(--secondary-color);">🏭 Supplier Details</h3>
-            <p contenteditable="true">Supplier Name<br>
-            Supplier Address<br>
-            City, Country</p>
+    <div id="pdf-content">
+        <div class="company-header">
+            <h1 contenteditable="true">🌟 StarTech Solutions</h1>
+            <p contenteditable="true">📌 123 Innovation Road<br>
+            🏙 Tech City, TC 45678<br>
+            📞 (555) 123-4567</p>
         </div>
-        
-        <div class="company-info">
-            <p><strong>📄 PO Number:</strong> <span contenteditable="true" class="editable">PO-2023-001</span></p>
-            <p><strong>📅 Date:</strong> <input type="date" class="editable" style="width: 100%; max-width: 160px;"></p>
+
+        <div class="flex-container">
+            <div class="supplier-info">
+                <h3 style="color: var(--secondary-color);">🏭 Supplier Details</h3>
+                <p contenteditable="true">Supplier Name<br>
+                Supplier Address<br>
+                City, Country</p>
+            </div>
+            
+            <div class="company-info">
+                <p><strong>📄 PO Number:</strong> <span contenteditable="true" class="editable">PO-2023-001</span></p>
+                <p><strong>📅 Date:</strong> <input type="date" class="editable" style="width: 100%; max-width: 160px;"></p>
+            </div>
         </div>
+
+        <table class="po-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Description</th>
+                    <th>Qty</th>
+                    <th>UOM</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="items">
+                <tr>
+                    <td>1</td>
+                    <td><div contenteditable="true" class="editable" tabindex="1">🖥 Computer System</div></td>
+                    <td><input type="number" class="editable qty" value="1" min="1" step="1" tabindex="2"></td>
+                    <td><div contenteditable="true" class="editable" tabindex="3">PC</div></td>
+                    <td><input type="number" class="editable price" value="0.000" min="0" step="0.001" tabindex="4"></td>
+                    <td class="total">0.000</td>
+                    <td><button class="delete-btn" onclick="deleteRow(this)" tabindex="5">🗑️ Delete</button></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button onclick="addRow()" style="background: var(--secondary-color); color: white;" tabindex="6">➕ Add New Item</button>
+
+        <div class="total-section">
+            <h3>💰 Total Amount</h3>
+            <p style="font-size: 1.2em; color: var(--primary-color);">Grand Total: $<span id="grandtotal">0.000</span></p>
+        </div>
+
+        <div class="approved-by">
+            <p><strong>Approved By:</strong> 
+                <span contenteditable="true" class="editable" style="display: inline-block; min-width: 200px;" tabindex="7">
+                    👤 [Authorized Signature]
+                </span>
+            </p>
+        </div>
+
+        <div class="button-group">
+            <button class="save-print" onclick="savePO(); generatePDF()" tabindex="8">
+                💾 Save & PDF
+            </button>
+            <button class="share-btn" onclick="sharePDF()" tabindex="9">
+                📤 Share PDF
+            </button>
+        </div>
+
+        <footer>
+            <p>© 2023 <span contenteditable="true">Your Company</span>. All rights reserved.</p>
+        </footer>
     </div>
-
-    <table class="po-table">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Description</th>
-                <th>Qty</th>
-                <th>UOM</th>
-                <th>Unit Price</th>
-                <th>Total</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="items">
-            <tr>
-                <td>1</td>
-                <td><div contenteditable="true" class="editable" tabindex="1">🖥 Computer System</div></td>
-                <td><input type="number" class="editable qty" value="1" min="1" step="1" tabindex="2"></td>
-                <td><div contenteditable="true" class="editable" tabindex="3">PC</div></td>
-                <td><input type="number" class="editable price" value="0.000" min="0" step="0.001" tabindex="4"></td>
-                <td class="total">0.000</td>
-                <td><button class="delete-btn" onclick="deleteRow(this)" tabindex="5">🗑️ Delete</button></td>
-            </tr>
-        </tbody>
-    </table>
-
-    <button onclick="addRow()" style="background: var(--secondary-color); color: white;" tabindex="6">➕ Add New Item</button>
-
-    <div class="total-section">
-        <h3>💰 Total Amount</h3>
-        <p style="font-size: 1.2em; color: var(--primary-color);">Grand Total: <span id="grandtotal">0.000</span></p>
-    </div>
-
-    <div class="approved-by">
-        <p><strong>Approved By:</strong> 
-            <span contenteditable="true" class="editable" style="display: inline-block; min-width: 200px;" tabindex="7">
-                👤 Type Your Name
-            </span>
-        </p>
-    </div>
-
-    <div class="button-group">
-        <button class="save-print" onclick="savePO(); generatePDF()" tabindex="8">
-            💾 Save & PDF
-        </button>
-        <button class="share-btn" onclick="sharePDF()" tabindex="9">
-            📤 Share PDF
-        </button>
-    </div>
-
-    <footer>
-        <p>© 2025 <span contenteditable="true">JSK PO Maker.com</span>. All rights reserved.</p>
-    </footer>
 
     <script>
         // Track current focused element
@@ -359,64 +369,113 @@
         }
 
         function generatePDF() {
-            const element = document.body;
+            // Create a clone of the content for PDF generation
+            const element = document.getElementById('pdf-content');
             const opt = {
                 margin: 10,
                 filename: 'PurchaseOrder.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                html2canvas: { 
+                    scale: 2,
+                    logging: true,
+                    useCORS: true,
+                    allowTaint: true,
+                    letterRendering: true,
+                    backgroundColor: '#FFFFFF'
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: 'a4', 
+                    orientation: 'portrait',
+                    compress: true
+                }
             };
 
-            // Hide buttons before generating PDF
-            document.querySelectorAll('button').forEach(btn => btn.style.display = 'none');
+            // Temporarily hide buttons
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(btn => btn.style.visibility = 'hidden');
             
-            html2pdf().from(element).set(opt).save().then(() => {
-                // Show buttons after PDF generation
-                document.querySelectorAll('button').forEach(btn => btn.style.display = '');
-            });
+            // Generate PDF
+            html2pdf().set(opt).from(element).toPdf().get('pdf').then(function(pdf) {
+                // Restore buttons visibility
+                buttons.forEach(btn => btn.style.visibility = 'visible');
+            }).save();
         }
 
         async function sharePDF() {
             try {
-                // First generate the PDF
-                const element = document.body;
+                // Create a clone of the content for PDF generation
+                const element = document.getElementById('pdf-content');
                 const opt = {
                     margin: 10,
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2 },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    html2canvas: { 
+                        scale: 2,
+                        logging: true,
+                        useCORS: true,
+                        allowTaint: true,
+                        letterRendering: true,
+                        backgroundColor: '#FFFFFF'
+                    },
+                    jsPDF: { 
+                        unit: 'mm', 
+                        format: 'a4', 
+                        orientation: 'portrait',
+                        compress: true
+                    }
                 };
 
-                // Hide buttons before generating PDF
-                document.querySelectorAll('button').forEach(btn => btn.style.display = 'none');
-                
-                const pdf = await html2pdf().from(element).set(opt).outputPdf();
-                
-                // Show buttons after PDF generation
-                document.querySelectorAll('button').forEach(btn => btn.style.display = '');
+                // Show loading state
+                const shareBtn = document.querySelector('.share-btn');
+                const originalText = shareBtn.innerHTML;
+                shareBtn.innerHTML = '⏳ Generating PDF...';
+                shareBtn.disabled = true;
 
-                // Create a blob from the PDF
-                const blob = new Blob([pdf], { type: 'application/pdf' });
+                // Temporarily hide buttons
+                const buttons = document.querySelectorAll('button');
+                buttons.forEach(btn => btn.style.visibility = 'hidden');
                 
-                if (navigator.share && navigator.canShare({ files: [new File([blob], 'PurchaseOrder.pdf', { type: 'application/pdf' })] })) {
+                // Generate PDF blob
+                const pdf = await html2pdf().set(opt).from(element).toPdf().get('pdf').then(function(pdf) {
+                    return pdf.output('blob');
+                }).finally(() => {
+                    // Restore buttons visibility
+                    buttons.forEach(btn => btn.style.visibility = 'visible');
+                    // Restore button state
+                    shareBtn.innerHTML = originalText;
+                    shareBtn.disabled = false;
+                });
+
+                // Create file for sharing
+                const file = new File([pdf], 'PurchaseOrder.pdf', { type: 'application/pdf' });
+                
+                if (navigator.share && navigator.canShare({ files: [file] })) {
                     await navigator.share({
                         title: 'Purchase Order',
-                        files: [new File([blob], 'PurchaseOrder.pdf', { type: 'application/pdf' })]
+                        files: [file],
+                        text: 'Please find attached the purchase order.'
                     });
                 } else {
                     // Fallback for browsers that don't support sharing files
-                    const url = URL.createObjectURL(blob);
+                    const url = URL.createObjectURL(pdf);
                     const a = document.createElement('a');
                     a.href = url;
                     a.download = 'PurchaseOrder.pdf';
+                    document.body.appendChild(a);
                     a.click();
+                    document.body.removeChild(a);
                     URL.revokeObjectURL(url);
                 }
             } catch (err) {
-                alert('Error sharing PDF: ' + err.message);
-                // Ensure buttons are visible even if there's an error
-                document.querySelectorAll('button').forEach(btn => btn.style.display = '');
+                console.error('Error sharing PDF:', err);
+                alert('Error sharing PDF. Please try again or use the download option.');
+                
+                // Ensure buttons are restored even if there's an error
+                const buttons = document.querySelectorAll('button');
+                buttons.forEach(btn => btn.style.visibility = 'visible');
+                const shareBtn = document.querySelector('.share-btn');
+                shareBtn.innerHTML = '📤 Share PDF';
+                shareBtn.disabled = false;
             }
         }
 
@@ -448,6 +507,10 @@
         // Initialize calculations and navigation
         document.querySelectorAll('#items tr').forEach(addCalcEvents);
         setupEnterKeyNavigation();
+
+        // Set default date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.querySelector('input[type="date"]').value = today;
     </script>
 </body>
 </html>
