@@ -11,12 +11,10 @@
             --accent-color: #e74c3c;
             --light-bg: #f9f9f9;
         }
-
         * {
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
         body {
             max-width: 210mm;
             width: 100%;
@@ -24,8 +22,20 @@
             margin: 0 auto;
             padding: 15px;
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            position: relative;
         }
-
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 5rem;
+            color: rgba(0, 0, 0, 0.1);
+            z-index: -1;
+            pointer-events: none;
+            white-space: nowrap;
+            font-weight: bold;
+        }
         .company-header {
             text-align: center;
             margin-bottom: 20px;
@@ -35,14 +45,12 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-
         .flex-container {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
             margin: 15px 0;
         }
-
         .supplier-info, .company-info {
             flex: 1 1 300px;
             padding: 15px;
@@ -50,7 +58,6 @@
             border-radius: 6px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-
         .po-table {
             width: 100%;
             border-collapse: collapse;
@@ -61,21 +68,17 @@
             display: block;
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
-
         .po-table th {
             background: var(--secondary-color);
             color: black;
             padding: 10px;
             font-weight: 600;
-            white-space: nowrap;
         }
-
         .po-table td {
             padding: 8px;
             border-bottom: 1px solid #eee;
-            white-space: nowrap;
+            vertical-align: top;
         }
-
         .editable {
             background: var(--light-bg);
             padding: 4px 6px;
@@ -85,13 +88,17 @@
             width: 100%;
             min-width: 60px;
         }
-
+        .description-cell {
+            min-width: 150px;
+            max-width: 250px;
+            white-space: normal !important;
+            word-wrap: break-word;
+        }
         .editable:focus {
             outline: none;
             border-color: var(--secondary-color);
             box-shadow: 0 0 0 2px rgba(52,152,219,0.2);
         }
-
         .button-group {
             display: flex;
             flex-wrap: wrap;
@@ -99,7 +106,6 @@
             margin: 20px 0;
             justify-content: center;
         }
-
         button {
             padding: 10px 20px;
             border: none;
@@ -111,33 +117,27 @@
             transition: all 0.2s ease;
             font-size: 14px;
         }
-
         button:hover {
             transform: translateY(-2px);
         }
-
         .save-pdf {
             background: #27ae60;
             color: white;
         }
-
         .share-btn {
             background: #9b59b6;
             color: white;
         }
-
         .print-btn {
             background: #f39c12;
             color: white;
         }
-
         .delete-btn {
             background: var(--accent-color);
             color: white;
             padding: 5px 10px;
             font-size: 12px;
         }
-
         .total-section {
             background: white;
             padding: 15px;
@@ -145,7 +145,6 @@
             margin: 15px 0;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-
         .approved-by {
             margin-top: 30px;
             padding: 15px;
@@ -153,54 +152,97 @@
             border-radius: 6px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-
         footer {
             text-align: center;
             margin-top: 30px;
             color: #666;
             font-size: 14px;
         }
-
         @media print {
-            button { display: none !important; }
-            body { padding: 10px; background: white; }
-            .company-header { box-shadow: none; }
+            .watermark {
+                display: block !important;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) rotate(-45deg);
+                font-size: 5rem;
+                color: rgba(0, 0, 0, 0.1);
+                z-index: 9999;
+                pointer-events: none;
+                white-space: nowrap;
+                font-weight: bold;
+            }
+            button {
+                display: none !important;
+            }
+            body {
+                padding: 10px;
+                background: white;
+            }
+            .company-header {
+                box-shadow: none;
+            }
+            /* Ensure table breaks across pages */
+            table {
+                page-break-inside: auto;
+            }
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+            td {
+                page-break-inside: avoid;
+            }
+            /* Hide action column when printing */
+            .action-column {
+                display: none;
+            }
+            /* Improve printing layout */
+            .po-table {
+                width: 100%;
+                display: table;
+                overflow: visible;
+            }
+            /* Ensure proper spacing for multi-page */
+            .approved-by {
+                page-break-inside: avoid;
+                margin-bottom: 20mm; /* Leave space at bottom of page */
+            }
+            /* Footer only on last page */
+            footer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                text-align: center;
+            }
         }
-
         @media (max-width: 768px) {
             .po-table {
                 display: block;
                 overflow-x: auto;
-                white-space: nowrap;
             }
-            
             .editable {
                 min-width: 50px;
             }
-            
             button {
                 padding: 8px 15px;
                 font-size: 13px;
             }
         }
-
         @media (max-width: 480px) {
             body {
                 padding: 10px;
             }
-            
             .company-header {
                 padding: 10px;
             }
-            
             .flex-container {
                 gap: 10px;
             }
-            
             .supplier-info, .company-info {
                 flex: 1 1 100%;
             }
-            
             .po-table th, .po-table td {
                 padding: 6px;
                 font-size: 14px;
@@ -210,28 +252,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
+    <div id="watermark" class="watermark" style="display: none;"></div>
     <div id="pdf-content">
         <div class="company-header">
             <h1 contenteditable="true"> SAF KUWAIT</h1>
-            <p contenteditable="true">📌 Industrial Area<br>
-            🏙 Shuwaikh,............<br>
-            📞 00000000,0000000</p>
+            <p contenteditable="true">📌 Industrial Area<br> � Shuwaikh, Kuwait <br> 📞 +965 00000000,+965 00000000</p>
         </div>
-
         <div class="flex-container">
             <div class="supplier-info">
                 <h3 style="color: var(--secondary-color);">🏭 Supplier Details</h3>
-                <p contenteditable="true">Supplier Name<br>
-                Supplier Address<br>
-                City, Country</p>
+                <p contenteditable="true">Supplier Name<br> Supplier Address<br> City, Country</p>
             </div>
-            
             <div class="company-info">
-                <p><strong>📄 PO Number:</strong> <span contenteditable="true" class="editable">PO-2025-0001</span></p>
+                <p><strong>📄 PO Number:</strong> <span id="po-number" contenteditable="true" class="editable">PO-2025-0001</span></p>
                 <p><strong>📅 Date:</strong> <input type="date" class="editable" style="width: 100%; max-width: 160px;"></p>
             </div>
         </div>
-
         <table class="po-table">
             <thead>
                 <tr>
@@ -241,61 +277,53 @@
                     <th>UOM</th>
                     <th>Unit Price</th>
                     <th>Total</th>
-                    <th>Action</th>
+                    <th class="action-column">Action</th>
                 </tr>
             </thead>
             <tbody id="items">
                 <tr>
                     <td>1</td>
-                    <td><div contenteditable="true" class="editable" tabindex="1">Type Item</div></td>
+                    <td class="description-cell"><div contenteditable="true" class="editable" tabindex="1">Type your item.</div></td>
                     <td><input type="number" class="editable qty" value="1" min="1" step="1" tabindex="2"></td>
                     <td><div contenteditable="true" class="editable" tabindex="3">PC</div></td>
                     <td><input type="number" class="editable price" value="0.000" min="0" step="0.001" tabindex="4"></td>
                     <td class="total">0.000</td>
-                    <td><button class="delete-btn" onclick="deleteRow(this)" tabindex="5">🗑️ Delete</button></td>
+                    <td class="action-column"><button class="delete-btn" onclick="deleteRow(this)" tabindex="5">🗑️ Delete</button></td>
                 </tr>
             </tbody>
         </table>
-
         <button onclick="addRow()" style="background: var(--secondary-color); color: white;" tabindex="6">➕ Add New Item</button>
-
         <div class="total-section">
             <h3>💰 Total Amount</h3>
             <p style="font-size: 1.2em; color: var(--primary-color);">Grand Total: KD: <span id="grandtotal">0.000</span></p>
         </div>
-
         <div class="approved-by">
-            <p><strong>Approved By:</strong> 
-                <span contenteditable="true" class="editable" style="display: inline-block; min-width: 200px;" tabindex="7">
-                    👤 Type Your Name/Sign
-                </span>
-                <span contenteditable="true" class="editable" style="display: inline-block; min-width: 200px;" tabindex="7">
-                    #Remarks/Notes
-                </span>
-            </p>
+            <p><strong>Approved By:</strong> <span contenteditable="true" class="editable" style="display: inline-block; min-width: 200px;" tabindex="7"> 👤 Type Your Name/Sign </span> <span contenteditable="true" class="editable" style="display: inline-block; min-width: 200px;" tabindex="7"> #Remarks/Notes </span></p>
         </div>
-
         <div class="button-group">
-            <button class="save-pdf" onclick="savePO(); generatePDF()" tabindex="8">
-                💾 Save & PDF
-            </button>
-            <button class="share-btn" onclick="sharePDF()" tabindex="9">
-                📤 Share PDF
-            </button>
-            <button class="print-btn" onclick="window.print()" tabindex="10">
-                🖨️ Print
-            </button>
+            <button class="save-pdf" onclick="savePO(); generatePDF()" tabindex="8"> 💾 Save & PDF </button>
+            <button class="share-btn" onclick="sharePDF()" tabindex="9"> 📤 Share PDF </button>
+            <button class="print-btn" onclick="window.print()" tabindex="10"> 🖨️ Print </button>
         </div>
-
         <footer>
             <p>© 2025 <span contenteditable="true">JSK PO Maker.com</span>. All rights reserved.</p>
         </footer>
     </div>
-
     <script>
         // Track current focused element
         let currentFocusIndex = 1;
-        let totalFocusableElements = 10; // Updated to include the new print button
+        let totalFocusableElements = 10;
+
+        // Update watermark when PO number changes
+        document.getElementById('po-number').addEventListener('input', function() {
+            updateWatermark(this.textContent);
+        });
+
+        function updateWatermark(poNumber) {
+            const watermark = document.getElementById('watermark');
+            watermark.textContent = poNumber;
+            watermark.style.display = poNumber ? 'block' : 'none';
+        }
 
         function addRow() {
             const table = document.getElementById('items');
@@ -303,30 +331,32 @@
             const rowCount = table.rows.length;
             
             // Calculate new tab indices for the row
-            const baseTabIndex = (rowCount * 5) + 1; // Each row has 5 focusable elements
+            const baseTabIndex = (rowCount * 5) + 1;
             
             newRow.innerHTML = `
                 <td>${rowCount}</td>
-                <td><div contenteditable="true" class="editable" tabindex="${baseTabIndex}">📦 New Item</div></td>
+                <td class="description-cell"><div contenteditable="true" class="editable" tabindex="${baseTabIndex}">📦 New item description.</div></td>
                 <td><input type="number" class="editable qty" value="1" min="1" step="1" tabindex="${baseTabIndex + 1}"></td>
                 <td><div contenteditable="true" class="editable" tabindex="${baseTabIndex + 2}">PC</div></td>
                 <td><input type="number" class="editable price" value="0.000" min="0" step="0.001" tabindex="${baseTabIndex + 3}"></td>
                 <td class="total">0.000</td>
-                <td><button class="delete-btn" onclick="deleteRow(this)" tabindex="${baseTabIndex + 4}">🗑️ Delete</button></td>
+                <td class="action-column"><button class="delete-btn" onclick="deleteRow(this)" tabindex="${baseTabIndex + 4}">🗑️ Delete</button></td>
             `;
             
             addCalcEvents(newRow);
             calculateTotal();
             setupEnterKeyNavigation();
-            totalFocusableElements += 5; // Update total count
+            totalFocusableElements += 5;
         }
 
         function deleteRow(btn) {
-            const row = btn.closest('tr');
-            row.remove();
-            updateRowNumbers();
-            calculateTotal();
-            totalFocusableElements -= 5; // Update total count
+            if (confirm("Are you sure you want to delete this item?")) {
+                const row = btn.closest('tr');
+                row.remove();
+                updateRowNumbers();
+                calculateTotal();
+                totalFocusableElements -= 5;
+            }
         }
 
         function updateRowNumbers() {
@@ -358,7 +388,6 @@
                 row.querySelector('.total').textContent = total.toFixed(3);
                 grandTotal += total;
             });
-
             document.getElementById('grandtotal').textContent = grandTotal.toFixed(3);
         }
 
@@ -372,7 +401,16 @@
         }
 
         function generatePDF() {
-            // Create a clone of the content for PDF generation
+            // Show loading state
+            const saveBtn = document.querySelector('.save-pdf');
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '⏳ Generating PDF...';
+            saveBtn.disabled = true;
+
+            // Show watermark for PDF generation
+            const watermark = document.getElementById('watermark');
+            watermark.style.display = 'block';
+
             const element = document.getElementById('pdf-content');
             const opt = {
                 margin: 10,
@@ -386,28 +424,25 @@
                     letterRendering: true,
                     backgroundColor: '#FFFFFF'
                 },
-                jsPDF: { 
-                    unit: 'mm', 
-                    format: 'a4', 
-                    orientation: 'portrait',
-                    compress: true
-                }
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true }
             };
 
             // Temporarily hide buttons
             const buttons = document.querySelectorAll('button');
             buttons.forEach(btn => btn.style.visibility = 'hidden');
-            
+
             // Generate PDF
             html2pdf().set(opt).from(element).toPdf().get('pdf').then(function(pdf) {
-                // Restore buttons visibility
+                // Restore UI
                 buttons.forEach(btn => btn.style.visibility = 'visible');
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+                watermark.style.display = 'none';
             }).save();
         }
 
         async function sharePDF() {
             try {
-                // Create a clone of the content for PDF generation
                 const element = document.getElementById('pdf-content');
                 const opt = {
                     margin: 10,
@@ -420,12 +455,7 @@
                         letterRendering: true,
                         backgroundColor: '#FFFFFF'
                     },
-                    jsPDF: { 
-                        unit: 'mm', 
-                        format: 'a4', 
-                        orientation: 'portrait',
-                        compress: true
-                    }
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true }
                 };
 
                 // Show loading state
@@ -434,21 +464,26 @@
                 shareBtn.innerHTML = '⏳ Generating PDF...';
                 shareBtn.disabled = true;
 
+                // Show watermark for PDF generation
+                const watermark = document.getElementById('watermark');
+                watermark.style.display = 'block';
+
                 // Temporarily hide buttons
                 const buttons = document.querySelectorAll('button');
                 buttons.forEach(btn => btn.style.visibility = 'hidden');
-                
+
                 // Generate PDF blob
                 const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
-                
+
                 // Restore UI
                 buttons.forEach(btn => btn.style.visibility = 'visible');
                 shareBtn.innerHTML = originalText;
                 shareBtn.disabled = false;
+                watermark.style.display = 'none';
 
                 // Create file for sharing
                 const file = new File([pdfBlob], 'PurchaseOrder.pdf', { type: 'application/pdf' });
-                
+
                 if (navigator.share && navigator.canShare({ files: [file] })) {
                     await navigator.share({
                         title: 'Purchase Order',
@@ -478,6 +513,7 @@
                 const shareBtn = document.querySelector('.share-btn');
                 shareBtn.innerHTML = '📤 Share PDF';
                 shareBtn.disabled = false;
+                document.getElementById('watermark').style.display = 'none';
             }
         }
 
@@ -488,7 +524,6 @@
                         e.preventDefault();
                         const currentTabIndex = parseInt(this.getAttribute('tabindex'));
                         const nextElement = document.querySelector(`[tabindex="${currentTabIndex + 1}"]`);
-                        
                         if (nextElement) {
                             nextElement.focus();
                             if (nextElement.contentEditable === 'true') {
@@ -509,10 +544,13 @@
         // Initialize calculations and navigation
         document.querySelectorAll('#items tr').forEach(addCalcEvents);
         setupEnterKeyNavigation();
-
+        
         // Set default date to today
         const today = new Date().toISOString().split('T')[0];
         document.querySelector('input[type="date"]').value = today;
+        
+        // Initialize watermark with current PO number
+        updateWatermark(document.getElementById('po-number').textContent);
     </script>
 </body>
 </html>
